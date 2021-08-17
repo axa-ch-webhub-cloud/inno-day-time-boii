@@ -111,9 +111,11 @@ class TimeTracker extends LitElement {
     `;
   }
 
-  handleTimeListChange({ target }) {
+  handleTimeListChange({ target, detail }) {
     const timeManagerDomNode = target.previousElementSibling;
+    const checkinToggleDomNode = target.nextElementSibling;
     customEvent('refresh', null, timeManagerDomNode);
+    customEvent('refresh', detail, checkinToggleDomNode);
   }
 
   handleStartStop({ detail }) {

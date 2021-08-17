@@ -227,8 +227,18 @@ class TimeList extends LitElement {
   }
 
   updated() {
-    // let others know we re-rendered
-    customEvent('change', null, this);
+    // let others know we re-rendered,
+    // and whether the last row has a missing stop time
+    // a.k.a. an 'incomplete' time pair,
+    // or even an entirely unfilled row, missing a start time
+    const { items = [] } = this;
+    const last = items.length - 1;
+    const lastItem = items[last];
+    const stopTime = Array.isArray(lastItem) && lastItem[GOING];
+    const startTime = Array.isArray(lastItem) && lastItem[COMING];
+    const incomplete = last >= 0 && Number.isNaN(parseFloat(stopTime));
+    const unfilled = Number.isNaN(parseFloat(startTime));
+    customEvent('change', { incomplete, unfilled }, this);
   }
 
   async handleRowAction({ target }) {
@@ -252,9 +262,8 @@ class TimeList extends LitElement {
     this.items = await addTimeEvent(EMPTY, append);
 
     setTimeout(() => {
-      console.log(this.shadowRoot.querySelector(".start"))
-      this.shadowRoot.querySelector(".start").focus();
-    },1);
+      this.shadowRoot.querySelector('.start').focus();
+    }, 1);
   }
 }
 
