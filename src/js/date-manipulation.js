@@ -159,8 +159,15 @@ const deleteTimePair = async where => {
   const { timePairs, key } = await getTimePairs();
   // remove the item under where
   const deleted = timePairs.splice(where, 1);
-  // persist updated timePairs
-  await set(key, timePairs);
+  // persist updated timePairs:
+  // any remaining pairs after removal?
+  if (timePairs.length > 0) {
+    // yes, persist the rest
+    await set(key, timePairs);
+  } else {
+    // no, delete the whole entry
+    await del(key);
+  }
   return timePairs;
 };
 

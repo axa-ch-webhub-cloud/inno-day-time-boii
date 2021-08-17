@@ -69,38 +69,44 @@ class TimeManager extends LitElement {
   async setWorkedHours() {
     // set up
     const storedTimes = await getTimePairs('time-pairs-only');
-    const nowDecimal = human2decimalTime();
+    const hasPairs = storedTimes.length > 0;
     let newWorkedHours = 0;
-    let lastStopTime = 0;
     let pauses = 0;
-    // for all time-interval pairs:
-    storedTimes.forEach(([startTime, stopTime], i) => {
-      // valid start time?
-      if (isNaN(startTime) || startTime > nowDecimal) {
-        // no, so skip this time interval
-        return;
+    const currentTimeNow = human2decimalTime();
+    // if there is at least one stored time pair, we can take the
+    // day's start time from it, otherwise we use the current time
+    this.dayStart = hasPairs ? storedTimes[0][0] : currentTimeNow;
+    let lastStopTime = this.dayStart;
+    // things look valid?
+    if (hasPairs && !isNaN(this.dayStart)) {
+      // yes, assume the best...
+      let incompleteLastTimeTinterval = false;
+      // and iterate over all stored time pairs:
+      for (let [startTime, stopTime] of storedTimes) {
+        // valid start time?
+        if (isNaN(startTime)) continue; // no, so skip this time interval
+
+        // valid stop time?
+        if (isNaN(stopTime)) {
+          // no, fill with current time now
+          stopTime = currentTimeNow;
+          // and notice that fact
+          incompleteLastTimeTinterval = true;
+        }
+
+        // add time interval length to worked hours sofar
+        newWorkedHours += stopTime - startTime;
+
+        // calculate pause increment
+        pauses += startTime - lastStopTime;
+        // lag stop time
+        lastStopTime = stopTime;
+
+        // ensure incomplete time interval is really the last one
+        // (by ignoring anything after that, seeing it as mysteriously broken state)
+        if (incompleteLastTimeTinterval) break;
       }
-      // for first time interval only, ...
-      if (i === 0) {
-        // ... remember it as start-of-day
-        this.dayStart = startTime;
-        // ... and initialize pseudo last-stop-time
-        lastStopTime = startTime;
-      }
-
-      // ensure valid stop time
-      stopTime = isNaN(stopTime)
-        ? /* unfinished time interval */ nowDecimal
-        : stopTime;
-
-      // add time interval length to worked hours sofar
-      newWorkedHours += stopTime - startTime;
-
-      // calculate pause increment
-      pauses += startTime - lastStopTime;
-      // lag stop time
-      lastStopTime = stopTime;
-    });
+    }
     // transfer to instance variables
     this.workedHours = newWorkedHours;
     this.pauses = pauses;
