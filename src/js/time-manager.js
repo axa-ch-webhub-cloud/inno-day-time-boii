@@ -94,7 +94,7 @@ class TimeManager extends LitElement {
           incompleteLastTimeTinterval = true;
         }
 
-        // add time interval length to worked hours sofar
+        // add time interval length to worked hours so far
         newWorkedHours += stopTime - startTime;
 
         // calculate pause increment

@@ -82,7 +82,7 @@ class CheckinToggle extends LitElement {
       <div class="container">
         <button
           class="start"
-          @click="${handleClick('start')}"
+          @click="${handleClick(START)}"
           ?disabled=${deactivateAllButtons || activeButton === STOP}
         >
           Kommen
@@ -90,7 +90,7 @@ class CheckinToggle extends LitElement {
         </button>
         <button
           class="stop"
-          @click="${handleClick('stop')}"
+          @click="${handleClick(STOP)}"
           ?disabled=${deactivateAllButtons || activeButton === START}
         >
           Gehen
