@@ -2382,7 +2382,7 @@ var draw_qrcode = function (text, typeNumber, errorCorrectionLevel) {
   document.write(create_qrcode(text, typeNumber, errorCorrectionLevel));
 };
 
-var create_qrcode = function (
+globalThis.create_qrcode = function (
   text,
   typeNumber,
   errorCorrectionLevel,
@@ -2400,7 +2400,7 @@ var create_qrcode = function (
   //  return qr.createImgTag();
 };
 
-var update_qrcode = function (qrData) {
+globalThis.update_qrcode = function (qrData) {
   var qrElement = document
     .querySelector('body > time-tracker')
     .shadowRoot.querySelector('article > sync-dialog')
