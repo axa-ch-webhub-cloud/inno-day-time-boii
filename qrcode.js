@@ -2338,20 +2338,15 @@ var qrcode = (function () {
   };
 })();
 
-var qrScanner = undefined;
-
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
-    // module.exports = factory();
-    qrScanner = factory();
+    module.exports = factory();
   }
 })(function () {
   return qrcode;
 });
-
-export default qrScanner;
 
 //#################
 
@@ -2405,14 +2400,12 @@ var create_qrcode = function (
   //  return qr.createImgTag();
 };
 
-export const update_qrcode = function (qrData) {
-  if (!qrData) document.getElementById('qr').innerHTML = '';
-  else
-    document.getElementById('qr').innerHTML = create_qrcode(
-      qrData,
-      '0',
-      'L',
-      'Byte',
-      'UTF-8'
-    );
+var update_qrcode = function (qrData) {
+  var qrElement = document
+    .querySelector('body > time-tracker')
+    .shadowRoot.querySelector('article > sync-dialog')
+    .shadowRoot.querySelector('div > article > p2p-sync')
+    .shadowRoot.getElementById('qr');
+  if (!qrData) qrElement.innerHTML = '';
+  else qrElement.innerHTML = create_qrcode(qrData, '0', 'L', 'Byte', 'UTF-8');
 };
