@@ -4,7 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AXA Time Tracker</title>
     <script src="qrcode.js"></script>
-    <script src="qr-scanner-worker.js"></script>
   </head>
   <body style="margin: 0">
     <script type="module">
@@ -16,6 +15,7 @@
 
     <script type="module">
       import QrScanner from './qr-scanner.js';
+      import './qr-scanner-worker.js';
 
       document
         .querySelector('body > time-tracker')
