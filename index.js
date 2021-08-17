@@ -132,3 +132,16 @@ class TimeTracker extends LitElement {
 }
 
 customElements.define('time-tracker', TimeTracker);
+
+// cf. https://developer.mozilla.org/en-US/docs/Web/API/StorageManager/persist
+if (navigator.storage && navigator.storage.persist) {
+  navigator.storage
+    .persist()
+    .then(persistent =>
+      console.log(
+        persistent
+          ? 'Storage will not be cleared except by explicit user action'
+          : 'Storage may be cleared by the UA under storage pressure.'
+      )
+    );
+}
