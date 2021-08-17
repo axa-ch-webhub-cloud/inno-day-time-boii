@@ -4,10 +4,9 @@ import {
   LitElement,
 } from 'https://unpkg.com/lit-element/lit-element.js?module';
 
-// import { QrScanner, update_qrcode } from '../../qrcode.js';
-// import '../../qrcode.js';
-// import '../../qr-scanner.js';
-// import '../../qr-scanner-worker.js';
+import '../../qrcode.js';
+import QrScanner from '../../qr-scanner.js';
+import '../../qr-scanner-worker.js';
 
 class P2pSync extends LitElement {
   static get properties() {
@@ -58,105 +57,109 @@ class P2pSync extends LitElement {
     </div>`;
   }
 
-  // connectedCallback() {
-  //   super.connectedCallback();
-  //   const _self = this;
-  //   setTimeout(() => {
-  //     let channel = null;
-  //     const connection = new RTCPeerConnection({
-  //       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
-  //     });
-  //     connection.ondatachannel = (event) => {
-  //       channel = event.channel;
-  //       channel.onmessage = (event) => {
-  //         _self.shadowRoot.querySelector('#received-message').innerHTML = '';
-  //       };
-  //     };
-  //     connection.onconnectionstatechange = (event) =>
-  //       (_self.shadowRoot.getElementById('connectionState').innerText =
-  //         connection.connectionState);
-  //     connection.oniceconnectionstatechange = (event) =>
-  //       (_self.shadowRoot.getElementById('iceConnectionState').innerText =
-  //         connection.iceConnectionState);
-  //     async function step_1_initiator_create_offer() {
-  //       channel = connection.createDataChannel('data');
-  //       channel.onmessage = (event) => {
-  //         _self.shadowRoot.querySelector('#received-message').innerHTML = '';
-  //       };
-  //       connection.onicecandidate = (event) => {
-  //         if (!event.candidate) {
-  //           var createdOffer = JSON.stringify(connection.localDescription);
-  //           update_qrcode(createdOffer);
-  //         }
-  //       };
-  //       const offer = await connection.createOffer();
-  //       await connection.setLocalDescription(offer);
-  //       // Wait for response QR Code
-  //       let qrScannerResponse = new QrScanner(
-  //         _self.shadowRoot.querySelector('#qr-video'),
-  //         async (result) => {
-  //           console.log('Peer approval response:', result);
-  //           qrScannerResponse.stop();
-  //           qrScannerResponse = undefined;
-  //           update_qrcode();
-  //           const answer = JSON.parse(result);
-  //           await connection.setRemoteDescription(answer);
-  //         }
-  //       );
-  //       qrScannerResponse.start();
-  //     }
-  //     async function step_2_accept_remote_offer() {
-  //       let qrScannerAcceptOffer = new QrScanner(
-  //         _self.shadowRoot.querySelector('#qr-video'),
-  //         async (result) => {
-  //           console.log('Accepted Remote Offer:', result);
-  //           qrScannerAcceptOffer.stop();
-  //           qrScannerAcceptOffer = undefined;
-  //           update_qrcode();
-  //           const offer = JSON.parse(result);
-  //           await connection.setRemoteDescription(offer);
-  //           step_3_create_answer();
-  //         }
-  //       );
-  //       qrScannerAcceptOffer.start();
-  //     }
-  //     async function step_3_create_answer() {
-  //       connection.onicecandidate = (event) => {
-  //         if (!event.candidate) {
-  //           var createdAnswer = JSON.stringify(connection.localDescription);
-  //           update_qrcode(createdAnswer);
-  //         }
-  //       };
-  //       const answer = await connection.createAnswer();
-  //       await connection.setLocalDescription(answer);
-  //     }
-  //     async function send_text() {
-  //       const text = _self.shadowRoot.getElementById('text').value;
-  //       channel.send(text);
-  //     }
-  //     function hideActionButtons() {
-  //       _self.shadowRoot.querySelector('#action-buttons').style.display =
-  //         'none';
-  //     }
-  //     _self.shadowRoot
-  //       .querySelector('#create-offer')
-  //       .addEventListener('click', () => {
-  //         step_1_initiator_create_offer();
-  //         hideActionButtons();
-  //       });
-  //     _self.shadowRoot
-  //       .querySelector('#accept-offer')
-  //       .addEventListener('click', () => {
-  //         step_2_accept_remote_offer();
-  //         hideActionButtons();
-  //       });
-  //     _self.shadowRoot
-  //       .querySelector('#send-text')
-  //       .addEventListener('click', () => {
-  //         send_text();
-  //       });
-  //   });
-  // }
+  connectedCallback() {
+    super.connectedCallback();
+    const _self = this;
+
+    setTimeout(() => {
+      const p2pSync = _self.shadowRoot;
+
+      let channel = null;
+
+      const connection = new RTCPeerConnection({
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+      });
+
+      connection.ondatachannel = (event) => {
+        console.log('ondatachannel');
+        channel = event.channel;
+        channel.onmessage = (event) => alert(event.data);
+      };
+
+      connection.onconnectionstatechange = (event) =>
+        (p2pSync.getElementById('connectionState').innerText =
+          connection.connectionState); // console.log('onconnectionstatechange', connection.connectionState)
+      connection.oniceconnectionstatechange = (event) =>
+        (p2pSync.getElementById('iceConnectionState').innerText =
+          connection.iceConnectionState);
+
+      async function step_1_initiator_create_offer() {
+        channel = connection.createDataChannel('data');
+        channel.onmessage = (event) => alert(event.data);
+        connection.onicecandidate = (event) => {
+          if (!event.candidate) {
+            var createdOffer = JSON.stringify(connection.localDescription);
+            update_qrcode(createdOffer);
+          }
+        };
+        const offer = await connection.createOffer();
+        await connection.setLocalDescription(offer);
+
+        // Wait for response QR Code
+        let qrScannerResponse = new QrScanner(
+          p2pSync.querySelector('#qr-video'),
+          async (result) => {
+            console.log('Peer approval response:', result);
+            qrScannerResponse.stop();
+            qrScannerResponse = undefined;
+
+            update_qrcode();
+
+            const answer = JSON.parse(result);
+            await connection.setRemoteDescription(answer);
+          }
+        );
+        qrScannerResponse.start();
+      }
+
+      async function step_2_accept_remote_offer() {
+        let qrScannerAcceptOffer = new QrScanner(
+          p2pSync.querySelector('#qr-video'),
+          async (result) => {
+            console.log('Accepted Remote Offer:', result);
+            qrScannerAcceptOffer.stop();
+            qrScannerAcceptOffer = undefined;
+
+            update_qrcode();
+
+            const offer = JSON.parse(result);
+            await connection.setRemoteDescription(offer);
+            step_3_create_answer();
+          }
+        );
+        qrScannerAcceptOffer.start();
+      }
+
+      async function step_3_create_answer() {
+        connection.onicecandidate = (event) => {
+          if (!event.candidate) {
+            var createdAnswer = JSON.stringify(connection.localDescription);
+
+            update_qrcode(createdAnswer);
+          }
+        };
+
+        const answer = await connection.createAnswer();
+        await connection.setLocalDescription(answer);
+      }
+
+      async function send_text() {
+        const text = p2pSync.getElementById('text').value;
+
+        channel.send(text);
+      }
+
+      p2pSync.querySelector('#create-offer').addEventListener('click', () => {
+        step_1_initiator_create_offer();
+      });
+      p2pSync.querySelector('#accept-offer').addEventListener('click', () => {
+        step_2_accept_remote_offer();
+      });
+      p2pSync.querySelector('#send-text').addEventListener('click', () => {
+        send_text();
+      });
+    });
+  }
 }
 
 customElements.define('p2p-sync', P2pSync);
