@@ -62,8 +62,7 @@ class SyncDialog extends LitElement {
 
       article {
         display: grid;
-        grid-template-columns: 4fr 1fr;
-        grid-template-rows: repeat(3, 1fr);
+        grid-template-columns: 1fr 1fr;
         grid-column-gap: 0px;
         grid-row-gap: 0px;
         position: relative;

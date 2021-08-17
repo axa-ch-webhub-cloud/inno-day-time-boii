@@ -2338,15 +2338,20 @@ var qrcode = (function () {
   };
 })();
 
+var qrScanner = undefined;
+
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory();
+    // module.exports = factory();
+    qrScanner = factory();
   }
 })(function () {
   return qrcode;
 });
+
+export default qrScanner;
 
 //#################
 
@@ -2400,7 +2405,7 @@ var create_qrcode = function (
   //  return qr.createImgTag();
 };
 
-var update_qrcode = function (qrData) {
+export const update_qrcode = function (qrData) {
   if (!qrData) document.getElementById('qr').innerHTML = '';
   else
     document.getElementById('qr').innerHTML = create_qrcode(
