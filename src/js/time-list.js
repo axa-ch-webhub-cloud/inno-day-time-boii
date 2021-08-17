@@ -145,6 +145,8 @@ class TimeList extends LitElement {
     (async () => {
       this.items = await getTimePairs('time-pairs-only');
     })();
+
+    this.focussable = true;
   }
 
   render() {
@@ -198,12 +200,14 @@ class TimeList extends LitElement {
                     type="time"
                     .value="${decimal2HoursMinutes(start)}"
                     @change="${handleRowAction}"
+                    data-index="${index}"
                   /><span>-</span
                   ><input
                     class="stop"
                     type="time"
                     .value="${decimal2HoursMinutes(stop)}"
                     @change="${handleRowAction}"
+                    data-index="${index}"
                   /><button
                     class="delete"
                     @click="${handleRowAction}"
@@ -239,6 +243,27 @@ class TimeList extends LitElement {
     const incomplete = last >= 0 && Number.isNaN(parseFloat(stopTime));
     const unfilled = Number.isNaN(parseFloat(startTime));
     customEvent('change', { incomplete, unfilled }, this);
+
+    if (!this.focussable) return;
+
+    const focusSelector =
+      last < 0
+        ? '*'
+        : unfilled
+        ? `input.start[data-index="${last}"]`
+        : incomplete
+        ? `input.stop[data-index="${last}"]`
+        : '.start';
+
+    setTimeout(() => {
+      const focusNode = this.shadowRoot.querySelector(focusSelector);
+      if (focusNode && this.focussable) focusNode.focus();
+    }, 1);
+  }
+
+  dontStealFocusAfterKeyboardInput() {
+    this.focussable = false;
+    setTimeout(() => (this.focussable = true), 100);
   }
 
   async handleRowAction({ target }) {
@@ -248,9 +273,11 @@ class TimeList extends LitElement {
     switch (className) {
       case 'start':
         this.items = await addTimeEvent(COMING, rowIndex, value);
+        this.dontStealFocusAfterKeyboardInput();
         break;
       case 'stop':
         this.items = await addTimeEvent(GOING, rowIndex, value);
+        this.dontStealFocusAfterKeyboardInput();
         break;
       case 'delete':
         this.items = await deleteTimePair(rowIndex);
@@ -260,10 +287,6 @@ class TimeList extends LitElement {
 
   async handleAdd() {
     this.items = await addTimeEvent(EMPTY, append);
-
-    setTimeout(() => {
-      this.shadowRoot.querySelector('.start').focus();
-    }, 1);
   }
 }
 
