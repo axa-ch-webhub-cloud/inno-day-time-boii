@@ -4,7 +4,7 @@ import {
   LitElement,
 } from 'https://unpkg.com/lit-element/lit-element.js?module';
 import fireEvent from './custom-event.js';
-import {sameDay} from './date-manipulation.js';
+import { sameDay } from './date-manipulation.js';
 
 const START = 'start';
 const STOP = 'stop';
@@ -24,7 +24,9 @@ class CheckinToggle extends LitElement {
     this.disableButtonsIfNeeded();
   }
 
-  get date() { return this._date; }
+  get date() {
+    return this._date;
+  }
 
   constructor() {
     super();
@@ -80,7 +82,7 @@ class CheckinToggle extends LitElement {
       <div class="container">
         <button
           class="start"
-          @click="${handleClick}"
+          @click="${handleClick('start')}"
           ?disabled=${deactivateAllButtons || activeButton === STOP}
         >
           Kommen
@@ -88,7 +90,7 @@ class CheckinToggle extends LitElement {
         </button>
         <button
           class="stop"
-          @click="${handleClick}"
+          @click="${handleClick('stop')}"
           ?disabled=${deactivateAllButtons || activeButton === START}
         >
           Gehen
@@ -100,24 +102,23 @@ class CheckinToggle extends LitElement {
 
   firstUpdated() {
     setInterval(() => {
-      this.disableButtonsIfNeeded()
+      this.disableButtonsIfNeeded();
     }, 29000); // refresh every half minute - 1 second
   }
 
-  handleClick(event) {
-    const { target } = event;
-
-    const oldState = target.classList.contains(START) ? START : STOP;
-    // toggle state
-    const newState = oldState === START ? STOP : START;
-    this.activeButton = newState;
-    // notify parent(s)
-    fireEvent('change', oldState, this);
+  handleClick(oldState) {
+    return (/* event unused here */) => {
+      // toggle state
+      const newState = oldState === START ? STOP : START;
+      this.activeButton = newState;
+      // notify parent(s)
+      fireEvent('change', oldState, this);
+    };
   }
 
   disableButtonsIfNeeded() {
-    if(this.date) {
-      if(sameDay(new Date(), new Date(this.date))) {
+    if (this.date) {
+      if (sameDay(new Date(), new Date(this.date))) {
         this.deactivateAllButtons = false;
       } else {
         this.deactivateAllButtons = true;
