@@ -1,4 +1,4 @@
-import { get, set } from './indexed-db.js';
+import { get, set, del } from './indexed-db.js';
 
 // constants
 const DEFAULT_LOCALE = 'de-CH';
