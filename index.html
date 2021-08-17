@@ -22,116 +22,108 @@
         .querySelector('body > time-tracker')
         .shadowRoot.querySelector('header > button:nth-child(3)')
         .addEventListener('click', () => {
-          setTimeout(() => {
-            const p2pSync = document
-              .querySelector('body > time-tracker')
-              .shadowRoot.querySelector('article > sync-dialog')
-              .shadowRoot.querySelector('div > article > p2p-sync').shadowRoot;
+          const p2pSync = document
+            .querySelector('body > time-tracker')
+            .shadowRoot.querySelector('article > sync-dialog')
+            .shadowRoot.querySelector('div > article > p2p-sync').shadowRoot;
 
-            let channel = null;
+          let channel = null;
 
-            const connection = new RTCPeerConnection({
-              iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
-            });
+          const connection = new RTCPeerConnection({
+            iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+          });
 
-            connection.ondatachannel = (event) => {
-              console.log('ondatachannel');
-              channel = event.channel;
-              channel.onmessage = (event) => alert(event.data);
+          connection.ondatachannel = (event) => {
+            console.log('ondatachannel');
+            channel = event.channel;
+            channel.onmessage = (event) => alert(event.data);
+          };
+
+          connection.onconnectionstatechange = (event) =>
+            (p2pSync.getElementById('connectionState').innerText =
+              connection.connectionState); // console.log('onconnectionstatechange', connection.connectionState)
+          connection.oniceconnectionstatechange = (event) =>
+            (p2pSync.getElementById('iceConnectionState').innerText =
+              connection.iceConnectionState);
+
+          async function step_1_initiator_create_offer() {
+            channel = connection.createDataChannel('data');
+            channel.onmessage = (event) => alert(event.data);
+            connection.onicecandidate = (event) => {
+              if (!event.candidate) {
+                var createdOffer = JSON.stringify(connection.localDescription);
+                update_qrcode(createdOffer);
+              }
+            };
+            const offer = await connection.createOffer();
+            await connection.setLocalDescription(offer);
+
+            // Wait for response QR Code
+            let qrScannerResponse = new QrScanner(
+              p2pSync.querySelector('#qr-video'),
+              async (result) => {
+                console.log('Peer approval response:', result);
+                qrScannerResponse.stop();
+                qrScannerResponse = undefined;
+
+                update_qrcode();
+
+                const answer = JSON.parse(result);
+                await connection.setRemoteDescription(answer);
+              }
+            );
+            qrScannerResponse.start();
+          }
+
+          async function step_2_accept_remote_offer() {
+            let qrScannerAcceptOffer = new QrScanner(
+              p2pSync.querySelector('#qr-video'),
+              async (result) => {
+                console.log('Accepted Remote Offer:', result);
+                qrScannerAcceptOffer.stop();
+                qrScannerAcceptOffer = undefined;
+
+                update_qrcode();
+
+                const offer = JSON.parse(result);
+                await connection.setRemoteDescription(offer);
+                step_3_create_answer();
+              }
+            );
+            qrScannerAcceptOffer.start();
+          }
+
+          async function step_3_create_answer() {
+            connection.onicecandidate = (event) => {
+              if (!event.candidate) {
+                var createdAnswer = JSON.stringify(connection.localDescription);
+
+                update_qrcode(createdAnswer);
+              }
             };
 
-            connection.onconnectionstatechange = (event) =>
-              (p2pSync.getElementById('connectionState').innerText =
-                connection.connectionState); // console.log('onconnectionstatechange', connection.connectionState)
-            connection.oniceconnectionstatechange = (event) =>
-              (p2pSync.getElementById('iceConnectionState').innerText =
-                connection.iceConnectionState);
+            const answer = await connection.createAnswer();
+            await connection.setLocalDescription(answer);
+          }
 
-            async function step_1_initiator_create_offer() {
-              channel = connection.createDataChannel('data');
-              channel.onmessage = (event) => alert(event.data);
-              connection.onicecandidate = (event) => {
-                if (!event.candidate) {
-                  var createdOffer = JSON.stringify(
-                    connection.localDescription
-                  );
-                  update_qrcode(createdOffer);
-                }
-              };
-              const offer = await connection.createOffer();
-              await connection.setLocalDescription(offer);
+          async function send_text() {
+            const text = p2pSync.getElementById('text').value;
 
-              // Wait for response QR Code
-              let qrScannerResponse = new QrScanner(
-                p2pSync.querySelector('#qr-video'),
-                async (result) => {
-                  console.log('Peer approval response:', result);
-                  qrScannerResponse.stop();
-                  qrScannerResponse = undefined;
+            channel.send(text);
+          }
 
-                  update_qrcode();
-
-                  const answer = JSON.parse(result);
-                  await connection.setRemoteDescription(answer);
-                }
-              );
-              qrScannerResponse.start();
-            }
-
-            async function step_2_accept_remote_offer() {
-              let qrScannerAcceptOffer = new QrScanner(
-                p2pSync.querySelector('#qr-video'),
-                async (result) => {
-                  console.log('Accepted Remote Offer:', result);
-                  qrScannerAcceptOffer.stop();
-                  qrScannerAcceptOffer = undefined;
-
-                  update_qrcode();
-
-                  const offer = JSON.parse(result);
-                  await connection.setRemoteDescription(offer);
-                  step_3_create_answer();
-                }
-              );
-              qrScannerAcceptOffer.start();
-            }
-
-            async function step_3_create_answer() {
-              connection.onicecandidate = (event) => {
-                if (!event.candidate) {
-                  var createdAnswer = JSON.stringify(
-                    connection.localDescription
-                  );
-
-                  update_qrcode(createdAnswer);
-                }
-              };
-
-              const answer = await connection.createAnswer();
-              await connection.setLocalDescription(answer);
-            }
-
-            async function send_text() {
-              const text = p2pSync.getElementById('text').value;
-
-              channel.send(text);
-            }
-
-            p2pSync
-              .querySelector('#create-offer')
-              .addEventListener('click', () => {
-                step_1_initiator_create_offer();
-              });
-            p2pSync
-              .querySelector('#accept-offer')
-              .addEventListener('click', () => {
-                step_2_accept_remote_offer();
-              });
-            p2pSync
-              .querySelector('#send-text')
-              .addEventListener('click', () => {
-                send_text();
-              });
+          p2pSync
+            .querySelector('#create-offer')
+            .addEventListener('click', () => {
+              step_1_initiator_create_offer();
+            });
+          p2pSync
+            .querySelector('#accept-offer')
+            .addEventListener('click', () => {
+              step_2_accept_remote_offer();
+            });
+          p2pSync.querySelector('#send-text').addEventListener('click', () => {
+            send_text();
           });
         });
     </script>
