@@ -1,10 +1,12 @@
 # AXA TimeTracker
 
 ## Beschreibung
-Dieses Zeiterfassungstool ermöglicht dir eine einfache Zeiterfassung unanhängig von deinem Standort und Gerät. Die Daten werden lokal auf deinem Gerät gespeichert
-und sind nur für dich einsehbar. Das heisst aber auch, dass die Daten veloren gehen können beim Verlust oder Wechsel des Gerätes. Damit es nicht zu diesem Fall kommt,
-empfehlen wir, einen regelmässigen Backup von deiner Zeiterfassung durchzuführen. Zudem kannst du deine Zeiterfassungsdaten in Excel Form herunterladen und diese dann per copy&paste in das offizielle Zeiterfassungs-Excel der AXA übertragen.
+Dieses Zeiterfassungstool ermöglicht dir eine einfache Zeiterfassung unanhängig von deinem Standort und Gerätetyp, denn sie funktioniert in jedem modernen Webbrowser. Die Daten werden lokal auf Deinem Gerät gespeichert und sind nur für Dich einsehbar &mdash; deine Privatsphäre bleibt also geschützt.
 
+Mit einer Excel-Export-Funktion kannst du deine Zeiterfassungsdaten herunterladen und diese dann per copy&paste in das offizielle Zeiterfassungs-Excel der AXA übertragen.
+
+Das heisst aber auch, dass die Daten verloren gehen können bei Verlust oder Wechsel des Gerätes sowie dem Löschen aller Browser-Daten.
+Damit es nicht zu diesem Fall kommt, empfehlen wir, einen regelmässigen Backup von deiner Zeiterfassung durchzuführen. 
 
 ## Zeiterfassung
 Für die Zeiterfassung gibt es zwei verschiedene Varianten:
@@ -18,7 +20,7 @@ Für die Zeiterfassung gibt es zwei verschiedene Varianten:
 Es gibt zwei verschiedene Formate wie die Daten aus der Zeiterfassung exportiert werden können.
 
 ### Excel
-Mit dem Klick auf das Download-Icon (![image](https://user-images.githubusercontent.com/36066471/172391465-0f671b47-3731-49e1-9f3d-2bc38b66b3f4.png)) werden alle gesammelten Daten in einem Excel-File zusammengefasst und heruntergeladen. Hierbei wird im Excel aber immer nur die Gesamtarbeitszeit pro Tag aufgelistet und nicht die einzelnen Einträge.
+Mit dem Klick auf das Download-Icon (![image](https://user-images.githubusercontent.com/36066471/172391465-0f671b47-3731-49e1-9f3d-2bc38b66b3f4.png)) werden alle gesammelten Daten in einem Excel-File zusammengefasst und heruntergeladen. Hierbei wird im Excel aber immer nur die Gesamtarbeitszeit pro Tag aufgelistet und nicht die einzelnen Einträge. (Wichtig, das Excel ersetzt nicht das offizielle Excel der AXA. Die Daten aus dem heruntergeladenen Excel können jedoch per copy&past in das offizielle AXA Excel hinzugefügt werden)
 
 ### JSON (Backup-File)
 Über das Einstellungs-Icon (![image](https://user-images.githubusercontent.com/36066471/172392786-2b1e5e7b-592d-4469-a679-cceb5e31f075.png)) können mit dem Button "JETZT EXPORTIEREN" alle gesammelten Daten in einem JSON Format File exportiert werden.
