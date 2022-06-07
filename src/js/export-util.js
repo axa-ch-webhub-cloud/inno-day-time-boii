@@ -1,4 +1,8 @@
-import { getTimePairs, decimal2HoursMinutes } from './date-manipulation.js';
+import {
+  getTimePairs,
+  decimal2HoursMinutes,
+  getPerDayRemarks,
+} from './date-manipulation.js';
 import { timeSheet2Excel } from './excel-output.js';
 
 // constants
@@ -29,6 +33,15 @@ const MONTH_LABELS = year =>
     title: `${month} ${year}`,
   }));
 
+const WITH_REMARKS = months => {
+  const output = [];
+  for (let i = 0, n = months.length; i < n; i++) {
+    output.push(months[i]);
+    output.push({ title: 'Bemerkungen' });
+  }
+  return output;
+};
+
 const timeEntry = (isDecimalFormat, totalWorkedHoursForDate) =>
   isDecimalFormat
     ? totalWorkedHoursForDate.toFixed(DECIMAL_PRECISION)
@@ -51,8 +64,8 @@ export const export2Excel = (isDecimalFormat, currentYear) => async _event => {
   // fill header title columns with 'Day' and 2 x all 12 months (for last and current year)
   const header = [
     { title: DAY_LABEL },
-    ...MONTH_LABELS(lastYear),
-    ...MONTH_LABELS(currentYear),
+    ...WITH_REMARKS(MONTH_LABELS(lastYear)),
+    ...WITH_REMARKS(MONTH_LABELS(currentYear)),
   ];
 
   // initialize rows with numeric day numbers 1..31 in first cell of each row, respectively
@@ -77,15 +90,17 @@ export const export2Excel = (isDecimalFormat, currentYear) => async _event => {
           // no entries for that date -
           // enter a default-worked-hours cell value
           rows[day].push(DEFAULT_WORKED_HOURS);
-          continue;
-        }
-        // calculate total worked time value
-        const totalWorkedHoursForDate = timePairs
-          .map(([startTime, endTime]) => endTime - startTime)
-          .reduce((timeRange1, timeRange2) => timeRange1 + timeRange2, 0);
+        } else {
+          // calculate total worked time value
+          const totalWorkedHoursForDate = timePairs
+            .map(([startTime, endTime]) => endTime - startTime)
+            .reduce((timeRange1, timeRange2) => timeRange1 + timeRange2, 0);
 
-        // enter it into appropriate cell
-        rows[day].push(timeEntry(isDecimalFormat, totalWorkedHoursForDate));
+          // enter it into appropriate cell
+          rows[day].push(timeEntry(isDecimalFormat, totalWorkedHoursForDate));
+        }
+        // insert remarks for that day (default: empty string)
+        rows[day].push(await getPerDayRemarks(year, month, day + 1));
       }
     }
   }
