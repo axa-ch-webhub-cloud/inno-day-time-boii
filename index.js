@@ -66,6 +66,10 @@ class TimeTracker extends LitElement {
       button img {
         height: 25px;
       }
+
+      a img {
+        height: 25px;
+      }
     `;
   }
 
@@ -84,6 +88,9 @@ class TimeTracker extends LitElement {
       <header>
         <img src="icons/axaLogo.svg" alt="logo" />
         <h1>TimeTracker</h1>
+        <a href="https://github.com/axa-ch-webhub-cloud/inno-day-time-boii/blob/master/Info.md">
+          <img src="icons/info_FILL0_wght400_GRAD0_opsz24.svg" alt="Info" />
+        </a>
         <button @click=${export2Excel()}>
           <img src="icons/save_alt-24px.svg" alt="exportieren" />
         </button>
