@@ -12,7 +12,6 @@ import './src/js/date-stepper.js';
 import './src/js/settings-dialog.js';
 import './src/js/time-list.js';
 import './src/js/time-manager.js';
-import './src/js/sync-dialog.js';
 import customEvent from './src/js/custom-event.js';
 
 class TimeTracker extends LitElement {
@@ -20,7 +19,6 @@ class TimeTracker extends LitElement {
     return {
       date: { type: String, reflect: true },
       settingsVisible: { type: Boolean },
-      syncVisible: { type: Boolean },
       startStop: { type: String },
     };
   }
@@ -28,7 +26,6 @@ class TimeTracker extends LitElement {
   constructor() {
     super();
     this.settingsVisible = false;
-    this.syncVisible = false;
   }
 
   static get styles() {
@@ -78,20 +75,15 @@ class TimeTracker extends LitElement {
       handleTimeListChange,
       handleStartStop,
       toggleSettings,
-      toggleSync,
       date,
       startStop = '',
       settingsVisible,
-      syncVisible,
     } = this;
 
     return html`
       <header>
         <img src="icons/axaLogo.svg" alt="logo" />
         <h1>TimeTracker</h1>
-        <button @click=${toggleSync}>
-          <img src="icons/sync_black_24dp.svg" alt="exportieren" />
-        </button>
         <button @click=${export2Excel()}>
           <img src="icons/save_alt-24px.svg" alt="exportieren" />
         </button>
@@ -115,10 +107,6 @@ class TimeTracker extends LitElement {
           @close="${toggleSettings}"
           .open="${settingsVisible}"
         ></settings-dialog>
-        <sync-dialog
-          @close="${toggleSync}"
-          .open="${syncVisible}"
-        ></sync-dialog>
       </article>
     `;
   }
@@ -143,9 +131,6 @@ class TimeTracker extends LitElement {
     this.settingsVisible = !this.settingsVisible;
   }
 
-  toggleSync() {
-    this.syncVisible = !this.syncVisible;
-  }
 }
 
 customElements.define('time-tracker', TimeTracker);
