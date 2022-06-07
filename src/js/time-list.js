@@ -12,7 +12,6 @@ import {
   EMPTY,
   getTimePairs,
   GOING,
-  last,
   setDate,
 } from './date-manipulation.js';
 import customEvent from './custom-event.js';
@@ -38,14 +37,23 @@ class TimeList extends LitElement {
   }
 
   set startStop(value) {
+    // remove stuff that's just designed to make the value unique for purposes of forcing a re-render
+    // (a performance.now() numeric timestamp)
+    value = value.replace(/[\d.]/g, '');
     // filter out invalid values
     if (!/^(?:start|stop)$/.test(value)) {
       return;
     }
+    const { numRows, row } = this.state || {
+      numRows: 0,
+      row: 0,
+    };
+    // start: fill a start field
+    // stop: fill a stop field
     const isStart = value === 'start';
-    // start: create a new time-pair row
-    // stop: fill second part of the last time-pair row
-    addTimeEvent(isStart ? COMING : GOING, isStart ? append : last).then(
+    const which = isStart ? COMING : GOING;
+    const where = row < numRows ? row : append;
+    addTimeEvent(which, where).then(
       // then: setters can't be async
       updatedItems => {
         this.items = updatedItems; // this triggers a re-render
@@ -166,7 +174,7 @@ class TimeList extends LitElement {
         const pause = pauseStop - pauseStart;
 
         if (pause <= 0) {
-          return;
+          return html``;
         }
 
         const { round, floor } = Math;
@@ -232,27 +240,38 @@ class TimeList extends LitElement {
 
   updated() {
     // let others know we re-rendered,
-    // and whether the last row has a missing stop time
+    // and whether a row has a missing stop time
     // a.k.a. an 'incomplete' time pair,
-    // or even an entirely unfilled row, missing a start time
+    // or even an entirely 'unfilled' row, missing a start time
     const { items = [] } = this;
-    const last = items.length - 1;
-    const lastItem = items[last];
-    const stopTime = Array.isArray(lastItem) && lastItem[GOING];
-    const startTime = Array.isArray(lastItem) && lastItem[COMING];
-    const incomplete = last >= 0 && Number.isNaN(parseFloat(stopTime));
-    const unfilled = Number.isNaN(parseFloat(startTime));
-    customEvent('change', { incomplete, unfilled }, this);
+    let row, incomplete, unfilled;
+    const numRows = items.length;
+    // for all rows from top to bottom:
+    for (row = 0; row < numRows; row++) {
+      // get current time pair parts
+      const currentItem = items[row];
+      const stopTime = Array.isArray(currentItem) && currentItem[GOING];
+      const startTime = Array.isArray(currentItem) && currentItem[COMING];
+      // calculate its salient row properties
+      incomplete = Number.isNaN(parseFloat(stopTime));
+      unfilled = Number.isNaN(parseFloat(startTime));
+      // stop at first-from-the-top row that is not completely filled
+      if (incomplete || unfilled) break;
+    }
+    this.state = { numRows, row, incomplete, unfilled };
+    // 'let others know': fire an event on ourselves (this) that others can subscribe to
+    customEvent('change', this.state, this);
 
+    // focus on the appropriate input field, using the salient properties determined above
     if (!this.focussable) return;
 
     const focusSelector =
-      last < 0
+      numRows < 1
         ? '*'
         : unfilled
-        ? `input.start[data-index="${last}"]`
+        ? `input.start[data-index="${row}"]`
         : incomplete
-        ? `input.stop[data-index="${last}"]`
+        ? `input.stop[data-index="${row}"]`
         : '.start';
 
     setTimeout(() => {

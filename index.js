@@ -119,7 +119,8 @@ class TimeTracker extends LitElement {
   }
 
   handleStartStop({ detail }) {
-    this.startStop = detail;
+    // + performance.now() : force re-render of this component *and* <time-list> by including fast-changing timestamp
+    this.startStop = detail + performance.now();
   }
 
   handleDateChange({ detail: { date } }) {
