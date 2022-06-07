@@ -12,6 +12,7 @@ import './src/js/date-stepper.js';
 import './src/js/settings-dialog.js';
 import './src/js/time-list.js';
 import './src/js/time-manager.js';
+import './src/js/per-day-remarks.js';
 import customEvent from './src/js/custom-event.js';
 
 class TimeTracker extends LitElement {
@@ -94,6 +95,7 @@ class TimeTracker extends LitElement {
       <article>
         <date-stepper @change=${handleDateChange}></date-stepper>
         <time-manager date=${date}></time-manager>
+        <per-day-remarks .date=${date}></per-day-remarks>
         <time-list
           .date=${date}
           .startStop="${startStop}"
@@ -129,7 +131,6 @@ class TimeTracker extends LitElement {
   toggleSettings() {
     this.settingsVisible = !this.settingsVisible;
   }
-
 }
 
 customElements.define('time-tracker', TimeTracker);

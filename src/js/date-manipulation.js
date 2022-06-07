@@ -70,6 +70,18 @@ const getTimePairs = async (noKey, year, month, day) => {
   return noKey ? timePairs : { timePairs, key };
 };
 
+const perDayRemarksKey = (year, month, day) =>
+  `${formatDateAsKey(date, year, month, day)}.remarks`;
+
+const getPerDayRemarks = async (year, month, day) => {
+  const key = perDayRemarksKey(year, month, day);
+  const remarks = (await get(key)) || '';
+  return remarks;
+};
+
+const setPerDayRemarks = (remarks, year, month, day) =>
+  set(perDayRemarksKey(year, month, day), remarks);
+
 // navigate to next day
 const nextDay = (offset = 1) => {
   date.setDate(date.getDate() + offset);
@@ -196,4 +208,6 @@ export {
   deleteTimePair,
   timeToDecimal,
   human2decimalTime,
+  getPerDayRemarks,
+  setPerDayRemarks,
 };
