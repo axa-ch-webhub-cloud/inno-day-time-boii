@@ -117,7 +117,7 @@ class CheckinToggle extends LitElement {
     };
   }
 
-  refreshButtonState({ numRows, row, incomplete, unfilled } = {}) {
+  refreshButtonState({ numRows, incomplete, unfilled } = {}) {
     // refresh due to time-pair update?
     if (typeof numRows === 'number') {
       // yes, set check-in button status according to whether the stop

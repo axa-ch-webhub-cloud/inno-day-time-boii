@@ -37,11 +37,14 @@ class TimeList extends LitElement {
   }
 
   set startStop(value) {
+    // remove stuff that's just designed to make the value unique for purposes of forcing a re-render
+    // (a performance.now() numeric timestamp)
+    value = value.replace(/[\d.]/g, '');
     // filter out invalid values
     if (!/^(?:start|stop)$/.test(value)) {
       return;
     }
-    const { numRows, row, unfilled, incomplete } = this.state || {
+    const { numRows, row } = this.state || {
       numRows: 0,
       row: 0,
     };
