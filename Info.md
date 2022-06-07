@@ -1,10 +1,17 @@
 # AXA TimeTracker
 
 ## Beschreibung
-Dieses Zeiterfassungstool ermöglicht dir eine einfache Zeiterfassung unanhängig von deinem Standort und Gerät. Die Daten werden lokal auf deinem Gerät gespeichert
-und sind nur für dich einsehbar. Das heisst aber auch, dass die Daten veloren gehen können beim Verlust oder Wechsel des Gerätes. Damit es nicht zu diesem Fall kommt,
-empfehlen wir, einen regelmässigen Backup von deiner Zeiterfassung durchzuführen. Den Export kannst du dann auch für die Übertragung in die offizielle Zeiterfassung
-der AXA benutzen.
+Diese mobile Web-App ermöglicht Dir eine einfache Zeiterfassung unabhängig von deinem Standort und Gerätetyp, denn sie funktioniert in jedem modernen Webbrowser.
+
+Eine Excel-Export-Funktion macht die lokal gespeicherten Daten auch für Zeiterfassungs-Spreadsheets verfügbar. Diesen Export kannst du insbesondere auch für die Übertragung in die offizielle Zeiterfassung der AXA benutzen.
+
+Die Daten werden lokal auf Deinem Gerät gespeichert
+und sind nur für Dich einsehbar &mdash; deine Privatsphäre bleibt also geschützt.
+
+Das heisst aber auch, dass die Daten verloren gehen können bei Verlust oder Wechsel des Gerätes sowie dem Löschen aller Browser-Daten.
+
+Damit es nicht zu diesem Fall kommt,
+empfehlen wir, einen regelmässigen Backup von deiner Zeiterfassung durchzuführen, für das ebenfalls entsprechende Funktionalität vorhanden ist. 
 
 
 ## Zeiterfassung
