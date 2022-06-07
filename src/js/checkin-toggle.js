@@ -117,21 +117,17 @@ class CheckinToggle extends LitElement {
     };
   }
 
-  refreshButtonState(lastTimePairStatus) {
+  refreshButtonState({ numRows, row, incomplete, unfilled } = {}) {
     // refresh due to time-pair update?
-    let incomplete, unfilled;
-    if (lastTimePairStatus) {
-      ({ incomplete, unfilled } = lastTimePairStatus);
+    if (typeof numRows === 'number') {
       // yes, set check-in button status according to whether the stop
       // time was filled in that time pair or not
-      this.activeButton = incomplete ? STOP : START;
+      this.activeButton = !unfilled && incomplete ? STOP : START;
     }
     // for general refresh, ...
     if (!this.date) return;
     // ... just make sure buttons are only enabled if we are at today's date
-    // and have no unfilled last row
-    this.deactivateAllButtons =
-      unfilled || !sameDay(new Date(), new Date(this.date));
+    this.deactivateAllButtons = !sameDay(new Date(), new Date(this.date));
   }
 }
 
