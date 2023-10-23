@@ -2,7 +2,7 @@ import {
   css,
   html,
   LitElement,
-} from 'https://unpkg.com/lit-element/lit-element.js?module';
+} from 'https://cdn.jsdelivr.net/npm/lit@3.0.0/+esm';
 import fireEvent from './custom-event.js';
 import { sameDay } from './date-manipulation.js';
 

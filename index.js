@@ -3,7 +3,7 @@ import {
   css,
   html,
   LitElement,
-} from 'https://unpkg.com/lit-element/lit-element.js?module';
+} from 'https://cdn.jsdelivr.net/npm/lit@3.0.0/+esm';
 
 import { export2Excel } from './src/js/export-util.js';
 

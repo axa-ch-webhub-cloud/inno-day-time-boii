@@ -2,7 +2,7 @@ import {
   css,
   html,
   LitElement,
-} from 'https://unpkg.com/lit-element/lit-element.js?module';
+} from 'https://cdn.jsdelivr.net/npm/lit@3.0.0/+esm';
 import { getPerDayRemarks, setPerDayRemarks } from './date-manipulation.js';
 
 class PerDayRemarks extends LitElement {
@@ -47,8 +47,8 @@ class PerDayRemarks extends LitElement {
 
     return html`
       <section>
-        <details ?open="${remarks.trim().length}"
-          ><summary>Bemerkungen</summary>
+        <details ?open="${remarks.trim().length}">
+          <summary>Bemerkungen</summary>
           <textarea
             .value="${remarks}"
             placeholder="Deine Bemerkungen hier.."

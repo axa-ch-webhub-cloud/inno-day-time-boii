@@ -2,7 +2,7 @@ import {
   css,
   html,
   LitElement,
-} from 'https://unpkg.com/lit-element/lit-element.js?module';
+} from 'https://cdn.jsdelivr.net/npm/lit@3.0.0/+esm';
 
 import {
   nextDay,
@@ -19,7 +19,7 @@ class DateStepper extends LitElement {
   static get properties() {
     return {
       value: { type: String, reflect: true },
-      _dateText: {type: String}
+      _dateText: { type: String },
     };
   }
 
@@ -30,7 +30,9 @@ class DateStepper extends LitElement {
     this.setHelpText();
   }
 
-  get value() { return this._value; }
+  get value() {
+    return this._value;
+  }
 
   constructor() {
     super();
@@ -93,7 +95,7 @@ class DateStepper extends LitElement {
   }
 
   render() {
-    const {_dateText, date} = this;
+    const { _dateText, date } = this;
 
     const helpText = _dateText
       ? html` <p class="helpText">${_dateText}</p> `
@@ -143,7 +145,7 @@ class DateStepper extends LitElement {
   }
 
   setHelpText() {
-    let {date} = this;
+    let { date } = this;
     const today = new Date();
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);

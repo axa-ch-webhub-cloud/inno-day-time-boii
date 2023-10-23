@@ -2,7 +2,7 @@ import {
   css,
   html,
   LitElement,
-} from 'https://unpkg.com/lit-element/lit-element.js?module';
+} from 'https://cdn.jsdelivr.net/npm/lit@3.0.0/+esm';
 import {
   addTimeEvent,
   append,
@@ -181,16 +181,14 @@ class TimeList extends LitElement {
         let text = `${round(pause * 60)} min Pause`;
 
         if (pause > 1) {
-          text = `${floor(pause)
-            .toString()
-            .padStart(2, '0')} h ${round(60 * (pause - floor(pause)))
+          text = `${floor(pause).toString().padStart(2, '0')} h ${round(
+            60 * (pause - floor(pause))
+          )
             .toString()
             .padStart(2, '0')} min Pause`;
         }
 
-        return html`
-          <li class="row pause">${text}</li>
-        `;
+        return html` <li class="row pause">${text}</li> `;
       }
     };
 
