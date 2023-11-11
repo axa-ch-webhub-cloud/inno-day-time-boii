@@ -5,6 +5,11 @@
     <title>AXA Time Tracker</title>
   </head>
   <body style="margin: 0">
+    <script>
+      // start service worker (no need to feature test, since we demand
+      // a modern browser with script type="module" below)
+      navigator.serviceWorker.register('service-worker.js');
+    </script>
     <script type="module">
       /* App bootstrap */
       import './index.js';
